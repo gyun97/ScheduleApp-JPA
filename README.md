@@ -1,6 +1,7 @@
 # ScheduleApp-JPA
 
 <br>
+<br>
 
 # API 명세서
 
@@ -39,3 +40,13 @@
 | 유저 목록 조회 | GET    | /users      | request body  | 다건 응답 정보 | 200 : 정상 조  |
 | 유저 수정    | PUT    | /users/{id} | request body  | 수정 정보  | 200 : 정상 수정 |
 | 유저 삭제    | DELETE | /users/{id} | request param | 삭제 정보   | 200 : 정상 삭제 |
+
+
+<br>
+<br>
+
+
+# ERD
+
+![image](https://github.com/user-attachments/assets/66d7d8b2-dea7-476b-a7c8-07ce9401184b)
+
