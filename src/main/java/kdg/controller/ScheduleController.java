@@ -16,11 +16,8 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
-    /**
-     * 일정 추가 메서드
-     * @param scheduleRequestDTO
-     * @return ResponseEntity<ScheduleResponseDTO>
-     */
+
+    // 일정 추가 메서드
     @PostMapping
     public ResponseEntity<ScheduleResponseDTO> createSchedule(@RequestBody ScheduleRequestDTO scheduleRequestDTO) {
         log.info("일정 추가");
@@ -28,11 +25,8 @@ public class ScheduleController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * 일정 단건 조회 메서드
-     * @param id
-     * @return ResponseEntity<ScheduleResponseDTO>
-     */
+
+    // 일정 조회 메서드(단건)
     @GetMapping("/{id}")
     public ResponseEntity<ScheduleResponseDTO> getSchedule(@PathVariable Long id) {
         log.info("일정 단건 조회");
@@ -40,15 +34,10 @@ public class ScheduleController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * 일정 수정 메서드
-     * @param id
-     * @param scheduleRequestDTO
-     * @return ResponseEntity<ScheduleResponseDTO>
-     */
+    // 일정 수정 메서드
     @PutMapping("/{id}")
     public ResponseEntity<ScheduleResponseDTO> updateSchedule(@PathVariable Long id, @RequestBody ScheduleRequestDTO scheduleRequestDTO) {
-        log.info("일정 수정");
+        log.info("ID가 {}인 일정 수정", id);
         ScheduleResponseDTO response = scheduleService.updateSchedule(id, scheduleRequestDTO);
         return ResponseEntity.ok(response);
     }

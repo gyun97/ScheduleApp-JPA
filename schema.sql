@@ -1,11 +1,11 @@
 CREATE TABLE `schedule` (
-                            `id` BIGINT NOT NULL AUTO_INCREMENT,
+                            `schedule_id` BIGINT NOT NULL AUTO_INCREMENT,
                             `user_name` VARCHAR(20) NULL,
                             `title` VARCHAR(50) NOT NULL,
                             `content` VARCHAR(200) NOT NULL,
                             `created_at` DATETIME NULL,
                             `updated_at` DATETIME NULL,
-                            PRIMARY KEY (`id`)
+                            PRIMARY KEY (`schedule_id`)
 );
 
 CREATE TABLE `user` (

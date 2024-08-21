@@ -6,6 +6,8 @@ import kdg.dto.ScheduleResponseDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -15,27 +17,27 @@ public class Schedule extends TimeStamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "schedule_id")
     private Long id;
-
-
 //    private Long userId;
 
-    @Column(nullable = false)
     private String userName;
-
-    @Column(nullable = false)
     private String title;
-
-    @Column(nullable = false)
     private String content;
 
+    @OneToMany(mappedBy = "schedule")
+    private List<Comment> comments = new ArrayList<>();
+
     @Builder
-    public Schedule(String userName, String title, String content) {
+    public Schedule(Long id, String userName, String title, String content, LocalDateTime updatedAt) {
+        this.id = id;
         this.userName = userName;
         this.title = title;
         this.content = content;
+        this.updatedAt = LocalDateTime.now();
     }
 
+    // 일정 수정 메서드
     public void updateSchedule(ScheduleRequestDTO scheduleRequestDTO) {
         this.userName = scheduleRequestDTO.getUserName();
         this.title = scheduleRequestDTO.getTitle();
