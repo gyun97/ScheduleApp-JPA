@@ -2,11 +2,19 @@ package kdg.controller;
 
 import kdg.dto.ScheduleRequestDTO;
 import kdg.dto.ScheduleResponseDTO;
+import kdg.entity.Schedule;
 import kdg.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -33,6 +41,17 @@ public class ScheduleController {
         ScheduleResponseDTO response = scheduleService.getSchedule(id);
         return ResponseEntity.ok(response);
     }
+
+    // 페이지별 일정 조회 메서드(page는 0부터 시작!)
+    @GetMapping
+    public ResponseEntity<List<ScheduleResponseDTO>> getSchedules(@PageableDefault(size = 10, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        log.info("일정 목록 조회 - 페이지: {}, 사이즈: {}", pageable.getPageNumber(), pageable.getPageSize());
+        List<ScheduleResponseDTO> schedules = scheduleService.getSchedules(pageable);
+        log.info("조회된 일정 수: {}", schedules.size());
+        return ResponseEntity.ok(schedules);
+    }
+
+
 
     // 일정 수정 메서드
     @PutMapping("/{id}")
