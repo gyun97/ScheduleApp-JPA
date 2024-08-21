@@ -46,6 +46,7 @@ public class ScheduleService {
         return ScheduleResponseDTO.toResponseDTO(schedule);
     }
 
+    // 일정 페이지 조회 로직
     public List<ScheduleResponseDTO> getSchedules(Pageable pageable) {
         Page<Schedule> schedulePage = scheduleRepository.findAll(pageable);
 
@@ -65,5 +66,8 @@ public class ScheduleService {
 
     }
 
-
+    public Long deleteSchedule(Long id) {
+        scheduleRepository.deleteById(id);
+        return id;
+    }
 }

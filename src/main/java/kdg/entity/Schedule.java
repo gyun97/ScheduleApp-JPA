@@ -25,7 +25,7 @@ public class Schedule extends TimeStamped{
     private String title;
     private String content;
 
-    @OneToMany(mappedBy = "schedule")
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
     @Builder
