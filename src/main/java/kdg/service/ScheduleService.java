@@ -1,9 +1,14 @@
 package kdg.service;
 
+import kdg.dto.AssignedUserDTO;
 import kdg.dto.ScheduleRequestDTO;
 import kdg.dto.ScheduleResponseDTO;
 import kdg.entity.Schedule;
+import kdg.entity.User;
+import kdg.entity.UserSchedule;
 import kdg.repository.ScheduleRepository;
+import kdg.repository.UserRepository;
+import kdg.repository.UserScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,17 +31,31 @@ import java.util.stream.Collectors;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+    private final UserScheduleRepository userScheduleRepository;
+    private final UserRepository userRepository;
 
     // 일정 저장 로직
     public ScheduleResponseDTO save(ScheduleRequestDTO scheduleRequestDTO) {
+
+        User user = userRepository.findById(scheduleRequestDTO.getUserID()).orElseThrow();
+
         Schedule schedule = Schedule.builder()
+                .userId(scheduleRequestDTO.getUserID())
                 .userName(scheduleRequestDTO.getUserName())
                 .title(scheduleRequestDTO.getTitle())
                 .content(scheduleRequestDTO.getContent())
                 .build();
 
-        Schedule savedSchedule = scheduleRepository.save(schedule);
-        return ScheduleResponseDTO.toResponseDTO(savedSchedule);
+        UserSchedule userSchedule = UserSchedule.builder()
+                .schedule(schedule)
+                .user(user)
+                .build();
+
+        user.addUserSchedule(userSchedule);
+        schedule.addUserSchedule(userSchedule);
+
+        userScheduleRepository.save(userSchedule);
+        return ScheduleResponseDTO.toResponseDTO(scheduleRepository.save(schedule));
     }
 
     // 일정 단건 조회 로직
@@ -69,5 +88,22 @@ public class ScheduleService {
     public Long deleteSchedule(Long id) {
         scheduleRepository.deleteById(id);
         return id;
+    }
+
+    public void addAssignedUser(Long id, AssignedUserDTO assignedUserDTO) {
+        for (Long userId : assignedUserDTO.getAssignedUserIdList()) {
+            User user = userRepository.findById(userId).orElseThrow();
+            Schedule schedule = scheduleRepository.findById(id).orElseThrow();
+
+            UserSchedule userSchedule = UserSchedule.builder()
+                    .schedule(schedule)
+                    .user(user)
+                    .build();
+
+            user.addUserSchedule(userSchedule);
+            schedule.addUserSchedule(userSchedule);
+
+            userScheduleRepository.save(userSchedule);
+        }
     }
 }

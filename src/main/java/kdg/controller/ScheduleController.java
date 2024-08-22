@@ -1,5 +1,6 @@
 package kdg.controller;
 
+import kdg.dto.AssignedUserDTO;
 import kdg.dto.CommentResponseDTO;
 import kdg.dto.ScheduleRequestDTO;
 import kdg.dto.ScheduleResponseDTO;
@@ -25,7 +26,6 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
-
     // 일정 추가 메서드
     @PostMapping
     public ResponseEntity<ScheduleResponseDTO> createSchedule(@RequestBody ScheduleRequestDTO scheduleRequestDTO) {
@@ -33,7 +33,6 @@ public class ScheduleController {
         ScheduleResponseDTO response = scheduleService.save(scheduleRequestDTO);
         return ResponseEntity.ok(response);
     }
-
 
     // 일정 조회 메서드(단건)
     @GetMapping("/{id}")
@@ -52,8 +51,6 @@ public class ScheduleController {
         return ResponseEntity.ok(schedules);
     }
 
-
-
     // 일정 수정 메서드
     @PutMapping("/{id}")
     public ResponseEntity<ScheduleResponseDTO> updateSchedule(@PathVariable Long id, @RequestBody ScheduleRequestDTO scheduleRequestDTO) {
@@ -62,6 +59,7 @@ public class ScheduleController {
         return ResponseEntity.ok(response);
     }
 
+    // 일정 삭제 메서드
     @DeleteMapping("/{id}")
     public ResponseEntity<Long> deleteScheduel(@PathVariable Long id) {
         log.info("ID가 {}인 일정 삭제", id);
@@ -70,4 +68,10 @@ public class ScheduleController {
         return ResponseEntity.ok(id);
     }
 
+    // 일정에 담당 유저 추가 메서드
+    @PostMapping("/{id}/assign-users")
+    public void addAssignedUser(@PathVariable Long id, @RequestBody AssignedUserDTO assignedUserDTO) {
+        log.info("ID {}인 일정에 ID가 {}인 해당 유저들을 추가 배정합니다.", id, assignedUserDTO.getAssignedUserIdList());
+        scheduleService.addAssignedUser(id, assignedUserDTO);
+    }
 }

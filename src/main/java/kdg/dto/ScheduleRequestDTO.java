@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 public class ScheduleRequestDTO {
 
-
+    private Long userID;
     private String userName;
     private String content;
     private String title;

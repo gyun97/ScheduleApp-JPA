@@ -45,10 +45,8 @@ public class CommentService {
 
         comment.setSchedule(schedule);
 
-
         Comment savedComment = commentRepository.save(comment);
         return CommentResponseDTO.toResponseDTO(comment);
-
 
     }
 
