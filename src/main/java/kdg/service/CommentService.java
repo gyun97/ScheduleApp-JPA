@@ -7,6 +7,7 @@ import kdg.dto.ScheduleResponseDTO;
 import kdg.entity.Comment;
 import kdg.entity.Schedule;
 import kdg.repository.CommentRepository;
+import kdg.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,11 +25,11 @@ import java.util.stream.Collectors;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final ScheduleService scheduleService;
+    private final ScheduleRepository scheduleRepository;
 
     public CommentResponseDTO createComment(CommentRequestDTO commentRequestDTO) {
 
-        ScheduleResponseDTO findedSchedule = scheduleService.getSchedule(commentRequestDTO.getScheduleId());
+        Schedule findedSchedule = scheduleRepository.findById(commentRequestDTO.getScheduleId()).orElseThrow();
 
         Schedule schedule = Schedule.builder()
                 .id(findedSchedule.getId())

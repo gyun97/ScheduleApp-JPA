@@ -1,9 +1,6 @@
 package kdg.controller;
 
-import kdg.dto.AssignedUserDTO;
-import kdg.dto.CommentResponseDTO;
-import kdg.dto.ScheduleRequestDTO;
-import kdg.dto.ScheduleResponseDTO;
+import kdg.dto.*;
 import kdg.entity.Schedule;
 import kdg.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
@@ -36,17 +33,17 @@ public class ScheduleController {
 
     // 일정 조회 메서드(단건)
     @GetMapping("/{id}")
-    public ResponseEntity<ScheduleResponseDTO> getSchedule(@PathVariable Long id) {
+    public ResponseEntity<List<GetScheduleResponseDTO>> getSchedule(@PathVariable Long id) {
         log.info("일정 단건 조회");
-        ScheduleResponseDTO response = scheduleService.getSchedule(id);
+        List<GetScheduleResponseDTO> response = scheduleService.getSchedule(id);
         return ResponseEntity.ok(response);
     }
 
     // 페이지별 일정 조회 메서드(page는 0부터 시작!)
     @GetMapping
-    public ResponseEntity<List<ScheduleResponseDTO>> getSchedules(@PageableDefault(size = 10, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<List<GetScheduleListResponseDTO>> getSchedules(@PageableDefault(size = 10, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("일정 목록 조회 - 페이지 인덱스: {}, 페이지: {}, 사이즈: {}", pageable.getPageNumber(), pageable.getPageNumber() + 1, pageable.getPageSize());
-        List<ScheduleResponseDTO> schedules = scheduleService.getSchedules(pageable);
+        List<GetScheduleListResponseDTO> schedules = scheduleService.getSchedules(pageable);
         log.info("{} 페이지에서 조회된 일정 수: {} 개", pageable.getPageNumber() + 1, schedules.size());
         return ResponseEntity.ok(schedules);
     }

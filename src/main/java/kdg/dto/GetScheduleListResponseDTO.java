@@ -3,37 +3,29 @@ package kdg.dto;
 import kdg.entity.Schedule;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
 import java.time.LocalDateTime;
 
 /**
- * 일정 등록, 수정할 때의 ResponseDTO
+ * 일정들 (페이지별로) 전체 조회할 때 담당 유저 정보를 제외한 ResponseDTO
  */
+
 @Getter
 @AllArgsConstructor
-public class ScheduleResponseDTO {
+public class GetScheduleListResponseDTO {
 
     private Long id;
-    private Long userId;
-    private String userName;
     private String title;
     private String content;
-    private String UserEmail;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-
-    public static ScheduleResponseDTO toResponseDTO(Schedule entity) {
-        return new ScheduleResponseDTO(
+    public static GetScheduleListResponseDTO toGetScheduleListResponseDTO(Schedule entity) {
+        return new GetScheduleListResponseDTO(
                 entity.getId(),
-                entity.getUserId(),
-                entity.getUserName(),
                 entity.getTitle(),
                 entity.getContent(),
-                entity.getUserEmail(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
         );
     }
-
 }

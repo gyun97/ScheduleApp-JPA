@@ -1,8 +1,6 @@
 package kdg.service;
 
-import kdg.dto.AssignedUserDTO;
-import kdg.dto.ScheduleRequestDTO;
-import kdg.dto.ScheduleResponseDTO;
+import kdg.dto.*;
 import kdg.entity.Schedule;
 import kdg.entity.User;
 import kdg.entity.UserSchedule;
@@ -41,9 +39,11 @@ public class ScheduleService {
 
         Schedule schedule = Schedule.builder()
                 .userId(scheduleRequestDTO.getUserID())
-                .userName(scheduleRequestDTO.getUserName())
+                .userName(user.getUserName())
+                .userEmail(user.getEmail())
                 .title(scheduleRequestDTO.getTitle())
                 .content(scheduleRequestDTO.getContent())
+                .userEmail(user.getEmail())
                 .build();
 
         UserSchedule userSchedule = UserSchedule.builder()
@@ -59,18 +59,25 @@ public class ScheduleService {
     }
 
     // 일정 단건 조회 로직
-    public ScheduleResponseDTO getSchedule(Long id) {
+    public List<GetScheduleResponseDTO> getSchedule(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("해당 ID를 가지는 일정은 존재하지 않습니다."));
-        return ScheduleResponseDTO.toResponseDTO(schedule);
+
+        List<GetScheduleResponseDTO> responseDTOList = new ArrayList<>();
+
+        for (UserSchedule userSchedule : schedule.getUserSchedules()) {
+            responseDTOList.add(GetScheduleResponseDTO.toGetScheduleResponse(userSchedule));
+        }
+        return responseDTOList;
+
     }
 
     // 일정 페이지 조회 로직
-    public List<ScheduleResponseDTO> getSchedules(Pageable pageable) {
+    public List<GetScheduleListResponseDTO> getSchedules(Pageable pageable) {
         Page<Schedule> schedulePage = scheduleRepository.findAll(pageable);
 
         return schedulePage.getContent().stream()
-                .map(ScheduleResponseDTO::toResponseDTO)
+                .map(GetScheduleListResponseDTO::toGetScheduleListResponseDTO)
                 .collect(Collectors.toList());
     }
 
@@ -85,11 +92,13 @@ public class ScheduleService {
 
     }
 
+    // 일정 삭제 로직
     public Long deleteSchedule(Long id) {
         scheduleRepository.deleteById(id);
         return id;
     }
 
+    // 일정 담당 유저 추가 로직
     public void addAssignedUser(Long id, AssignedUserDTO assignedUserDTO) {
         for (Long userId : assignedUserDTO.getAssignedUserIdList()) {
             User user = userRepository.findById(userId).orElseThrow();

@@ -24,6 +24,7 @@ public class Schedule extends TimeStamped{
     private String userName;
     private String title;
     private String content;
+    private String userEmail;
 
     @OneToMany(mappedBy = "schedule")
     @JsonIgnore
@@ -34,13 +35,14 @@ public class Schedule extends TimeStamped{
     private List<Comment> comments = new ArrayList<>();
 
     @Builder
-    public Schedule(Long id, String userName, String title, String content, LocalDateTime updatedAt, Long userId) {
+    public Schedule(Long id, String userName, String title, String content, LocalDateTime updatedAt, Long userId, String userEmail) {
         this.userId = userId;
         this.id = id;
         this.userName = userName;
         this.title = title;
         this.content = content;
         this.updatedAt = LocalDateTime.now();
+        this.userEmail = userEmail;
     }
 
 
