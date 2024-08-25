@@ -26,11 +26,11 @@ public class Schedule extends TimeStamped{
     private String content;
     private String userEmail;
 
-    @OneToMany(mappedBy = "schedule")
+    @OneToMany(mappedBy = "schedule", orphanRemoval = true)
     @JsonIgnore
     private List<UserSchedule> userSchedules = new ArrayList<>();
 
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
 
@@ -45,7 +45,6 @@ public class Schedule extends TimeStamped{
         this.userEmail = userEmail;
     }
 
-
     // 유저-일정 테이블과의 연관관계 메서드
     public void addUserSchedule(UserSchedule userSchedule) {
         userSchedules.add(userSchedule);
@@ -59,6 +58,4 @@ public class Schedule extends TimeStamped{
         this.content = scheduleRequestDTO.getContent();
         this.updatedAt = LocalDateTime.now();
     }
-
-
 }

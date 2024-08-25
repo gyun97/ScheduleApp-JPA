@@ -1,5 +1,6 @@
 package kdg.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kdg.entity.Schedule;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

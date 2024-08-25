@@ -1,7 +1,9 @@
 package kdg.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import kdg.dto.UserRequestDTO;
 import kdg.dto.UserResponseDTO;
+import kdg.jwt.JwtUtil;
 import kdg.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +22,9 @@ public class UserController {
 
     // 유저 등록 메서드
     @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequestDTO) {
+    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequestDTO, HttpServletResponse response) {
         log.info("유저 추가");
-        return ResponseEntity.ok(userService.createUser(userRequestDTO));
+        return ResponseEntity.ok(userService.createUser(userRequestDTO, response));
     }
 
     // 유저 단건 조회 메서드

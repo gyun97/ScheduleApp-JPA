@@ -1,18 +1,21 @@
 package kdg.service;
 
+import jakarta.servlet.http.HttpServletResponse;
+import kdg.config.PasswordEncoder;
 import kdg.dto.UserRequestDTO;
 import kdg.dto.UserResponseDTO;
-import kdg.entity.Schedule;
 import kdg.entity.User;
+import kdg.entity.UserRoleEnum;
+import kdg.jwt.JwtUtil;
 import kdg.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,17 +25,44 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+
+    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     // 유저 등록 로직
-    public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
+    public UserResponseDTO createUser(UserRequestDTO userRequestDTO, HttpServletResponse response) {
+
+        String password = passwordEncoder.encode(userRequestDTO.getPassword());
 
         User user = User.builder()
                 .userName(userRequestDTO.getUserName())
                 .email(userRequestDTO.getEmail())
+                .password(password)
+                .role(UserRoleEnum.USER)
                 .build();
 
+        // 등록 이메일로 회원 중복 확인
+        Optional<User> checkedEmail = userRepository.findByEmail(user.getEmail());
+        if (checkedEmail.isPresent()) {
+            throw new IllegalArgumentException("이미 중복된 사용자가 존재합니다.");
+        }
+
+        // 사용자 Role 확인
+//        UserRoleEnum role = UserRoleEnum.USER;
+        if (userRequestDTO.isAdmin()) {
+            if (!ADMIN_TOKEN.equals(userRequestDTO.getAdminToken())) {
+                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
+            }
+            user.updateUserRole(UserRoleEnum.ADMIN);
+        }
+
         User savedUser = userRepository.save(user);
-        return UserResponseDTO.toResponseDTO(user);
+
+        String token = jwtUtil.createToken(user.getEmail(), user.getRole());
+        jwtUtil.addJwtToCookie(token, response);
+
+        return UserResponseDTO.toResponseDTO(savedUser);
     }
 
     // 유정 단건 조회 로직
@@ -52,6 +82,10 @@ public class UserService {
 
     // 유저 수정 로직
     public UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDTO) {
+
+        // 새로 수정한 비밀번호 암호화
+        String password = passwordEncoder.encode(userRequestDTO.getPassword());
+        userRequestDTO.setPassword(password);
 
         return UserResponseDTO.toResponseDTO(userRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("해당 ID를 가지는 일정은 존재하지 않습니다.")).updateUser(userRequestDTO));

@@ -23,8 +23,15 @@ public class User extends TimeStamped {
     @Column(name = "user_id")
     private Long id;
     private String userName;
+
+    @Column(nullable = false, updatable = true, unique = true)
     private String email;
 
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
+    private UserRoleEnum role;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
@@ -32,10 +39,12 @@ public class User extends TimeStamped {
 
 
     @Builder
-    public User(Long id, String userName, String email, LocalDateTime updatedAt) {
+    public User(Long id, String userName, String email, String password,  UserRoleEnum role, LocalDateTime updatedAt) {
         this.id = id;
         this.userName = userName;
         this.email = email;
+        this.password = password;
+        this.role = role;
         this.updatedAt = LocalDateTime.now();
     }
 
@@ -49,8 +58,14 @@ public class User extends TimeStamped {
     public User updateUser(UserRequestDTO userRequestDTO) {
         this.userName = userRequestDTO.getUserName();
         this.email = userRequestDTO.getEmail();
+        this.password = userRequestDTO.getPassword();
         this.updatedAt = LocalDateTime.now();
         return this;
+    }
+
+    // 유저 권한 수정
+    public void updateUserRole(UserRoleEnum userRole) {
+        this.role = userRole;
     }
 
 }
