@@ -1,6 +1,7 @@
 package kdg.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
+import kdg.dto.LoginRequestDto;
 import kdg.dto.UserRequestDTO;
 import kdg.dto.UserResponseDTO;
 import kdg.jwt.JwtUtil;
@@ -10,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -20,10 +23,10 @@ public class UserController {
 
     private final UserService userService;
 
-    // 유저 등록 메서드
-    @PostMapping
+    // 유저 등록(회원가입) 메서드
+    @PostMapping("/signup")
     public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequestDTO, HttpServletResponse response) {
-        log.info("유저 추가");
+        log.info("회원 가입이 완료되었습니다.");
         return ResponseEntity.ok(userService.createUser(userRequestDTO, response));
     }
 
@@ -50,9 +53,17 @@ public class UserController {
 
     // 유저 삭제 메서드
     @DeleteMapping("/{id}")
-    public ResponseEntity<Long> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         log.info("ID가 {}인 유저 삭제", id);
         userService.deleteUser(id);
-        return ResponseEntity.ok(id);
+        return ResponseEntity.ok("유저 삭제 완료");
+    }
+
+    // 유저 로그인 메서드
+    @PostMapping("/login")
+    public ResponseEntity<String> userLogin(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+        log.info("로그인 시도");
+        userService.login(loginRequestDto, response);
+        return ResponseEntity.ok("로그인에 성공하였습니다.");
     }
 }

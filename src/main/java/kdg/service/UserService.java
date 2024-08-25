@@ -2,10 +2,12 @@ package kdg.service;
 
 import jakarta.servlet.http.HttpServletResponse;
 import kdg.config.PasswordEncoder;
+import kdg.dto.LoginRequestDto;
 import kdg.dto.UserRequestDTO;
 import kdg.dto.UserResponseDTO;
 import kdg.entity.User;
 import kdg.entity.UserRoleEnum;
+import kdg.exception.InvalidCredentialsException;
 import kdg.jwt.JwtUtil;
 import kdg.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +32,8 @@ public class UserService {
 
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
-    // 유저 등록 로직
+
+    // 유저 등록(회원가입) 로직
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO, HttpServletResponse response) {
 
         String password = passwordEncoder.encode(userRequestDTO.getPassword());
@@ -97,5 +100,24 @@ public class UserService {
         userRepository.deleteById(id);
         return id;
     }
+
+    // 유저 로그인 로직
+    public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+
+        // 유저 확인
+        User user = userRepository.findByEmail(loginRequestDto.getEmail())
+                .orElseThrow(() -> new InvalidCredentialsException("해당 이메일을 가진 등록된 사용자가 존재하지 않습니다."));
+
+        // 비밀번호 확인
+        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("비밀번호가 일치하지 않습니다.");
+        }
+
+        String token = jwtUtil.createToken(user.getEmail(), user.getRole());
+        jwtUtil.addJwtToCookie(token, response);
+
+    }
+
+
 
 }
