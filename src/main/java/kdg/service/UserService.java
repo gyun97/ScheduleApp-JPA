@@ -68,6 +68,22 @@ public class UserService {
         return UserResponseDTO.toResponseDTO(savedUser);
     }
 
+    // 유저 로그인 로직
+    public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+
+        // 유저 확인
+        User user = userRepository.findByEmail(loginRequestDto.getEmail())
+                .orElseThrow(() -> new InvalidCredentialsException("해당 이메일을 가진 등록된 사용자가 존재하지 않습니다."));
+
+        // 비밀번호 확인
+        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("비밀번호가 일치하지 않습니다.");
+        }
+
+        String token = jwtUtil.createToken(user.getEmail(), user.getRole());
+        jwtUtil.addJwtToCookie(token, response);
+    }
+
     // 유정 단건 조회 로직
     public UserResponseDTO getUser(Long id) {
         User findUser = userRepository.findById(id)
@@ -100,24 +116,6 @@ public class UserService {
         userRepository.deleteById(id);
         return id;
     }
-
-    // 유저 로그인 로직
-    public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
-
-        // 유저 확인
-        User user = userRepository.findByEmail(loginRequestDto.getEmail())
-                .orElseThrow(() -> new InvalidCredentialsException("해당 이메일을 가진 등록된 사용자가 존재하지 않습니다."));
-
-        // 비밀번호 확인
-        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-            throw new InvalidCredentialsException("비밀번호가 일치하지 않습니다.");
-        }
-
-        String token = jwtUtil.createToken(user.getEmail(), user.getRole());
-        jwtUtil.addJwtToCookie(token, response);
-
-    }
-
 
 
 }

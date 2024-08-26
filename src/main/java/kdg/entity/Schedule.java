@@ -3,6 +3,7 @@ package kdg.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import kdg.dto.ScheduleRequestDTO;
+import kdg.dto.WeatherData;
 import lombok.*;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,10 @@ public class Schedule extends TimeStamped{
     private String userName;
     private String title;
     private String content;
+
+    @Column(nullable = false, unique = true)
     private String userEmail;
+    private String weather;
 
     @OneToMany(mappedBy = "schedule", orphanRemoval = true)
     @JsonIgnore
@@ -58,4 +62,11 @@ public class Schedule extends TimeStamped{
         this.content = scheduleRequestDTO.getContent();
         this.updatedAt = LocalDateTime.now();
     }
+
+    // 해당 일정 날짜에 날씨 삽입 메서드
+    public void setWeatherOfDay(WeatherData weatherData) {
+        this.weather = weatherData.getWeather();
+    }
+
+
 }

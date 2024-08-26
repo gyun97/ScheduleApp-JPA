@@ -30,6 +30,14 @@ public class UserController {
         return ResponseEntity.ok(userService.createUser(userRequestDTO, response));
     }
 
+    // 유저 로그인 메서드
+    @PostMapping("/login")
+    public ResponseEntity<String> userLogin(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+        log.info("로그인 시도");
+        userService.login(loginRequestDto, response);
+        return ResponseEntity.ok("로그인에 성공하였습니다.");
+    }
+
     // 유저 단건 조회 메서드
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> getUser(@PathVariable Long id) {
@@ -57,13 +65,5 @@ public class UserController {
         log.info("ID가 {}인 유저 삭제", id);
         userService.deleteUser(id);
         return ResponseEntity.ok("유저 삭제 완료");
-    }
-
-    // 유저 로그인 메서드
-    @PostMapping("/login")
-    public ResponseEntity<String> userLogin(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
-        log.info("로그인 시도");
-        userService.login(loginRequestDto, response);
-        return ResponseEntity.ok("로그인에 성공하였습니다.");
     }
 }

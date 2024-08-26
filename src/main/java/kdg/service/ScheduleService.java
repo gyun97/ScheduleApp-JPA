@@ -19,6 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -34,6 +37,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final UserScheduleRepository userScheduleRepository;
     private final UserRepository userRepository;
+    private final WeatherService weatherService;
 
     // 일정 저장 로직
     public ScheduleResponseDTO save(ScheduleRequestDTO scheduleRequestDTO) {
@@ -53,6 +57,23 @@ public class ScheduleService {
                 .schedule(schedule)
                 .user(user)
                 .build();
+
+        // 날씨 데이터 가져오기
+        List<WeatherData> weatherDataList = weatherService.getWeatherData();
+
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
+        String dateOfSchedule = currentDateTime.format(formatter);
+
+        log.info("오늘 날짜: {}", dateOfSchedule); // ex) 오늘 날짜: 08-26
+
+        // 해당 날짜의 날씨 데이터 추출
+        WeatherData weatherData = weatherDataList.stream()
+                .filter(data -> String.valueOf(data).contains(dateOfSchedule))
+                .findFirst()
+                .orElse(null);
+
+        schedule.setWeatherOfDay(weatherData); //날씨 삽입
 
         user.addUserSchedule(userSchedule);
         schedule.addUserSchedule(userSchedule);

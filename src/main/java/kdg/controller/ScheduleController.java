@@ -3,22 +3,17 @@ package kdg.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kdg.dto.*;
-import kdg.entity.Schedule;
-import kdg.entity.UserRoleEnum;
 import kdg.jwt.JwtUtil;
 import kdg.service.ScheduleService;
+import kdg.service.WeatherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 
 @RestController
@@ -29,6 +24,7 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
     private final JwtUtil jwtUtil;
+
 
     // 일정 추가 메서드
     @PostMapping

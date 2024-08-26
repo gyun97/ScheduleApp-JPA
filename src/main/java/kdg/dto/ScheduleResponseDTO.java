@@ -22,7 +22,7 @@ public class ScheduleResponseDTO {
     private String UserEmail;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
+    private String weather;
 
     public static ScheduleResponseDTO toResponseDTO(Schedule entity) {
         return new ScheduleResponseDTO(
@@ -33,7 +33,8 @@ public class ScheduleResponseDTO {
                 entity.getContent(),
                 entity.getUserEmail(),
                 entity.getCreatedAt(),
-                entity.getUpdatedAt()
+                entity.getUpdatedAt(),
+                entity.getWeather()
         );
     }
 
