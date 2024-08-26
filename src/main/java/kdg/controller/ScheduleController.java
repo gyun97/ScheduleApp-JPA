@@ -1,7 +1,11 @@
 package kdg.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import kdg.dto.*;
 import kdg.entity.Schedule;
+import kdg.entity.UserRoleEnum;
+import kdg.jwt.JwtUtil;
 import kdg.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +17,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 @RestController
@@ -22,6 +28,7 @@ import java.util.List;
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
+    private final JwtUtil jwtUtil;
 
     // 일정 추가 메서드
     @PostMapping
@@ -48,18 +55,54 @@ public class ScheduleController {
         return ResponseEntity.ok(schedules);
     }
 
-    // 일정 수정 메서드
+    // 관리자 권한 일정 수정
     @PutMapping("/{id}")
-    public ResponseEntity<ScheduleResponseDTO> updateSchedule(@PathVariable Long id, @RequestBody ScheduleRequestDTO scheduleRequestDTO) {
-        log.info("ID가 {}인 일정 수정", id);
+    public ResponseEntity<?> updateSchedule(
+            @PathVariable Long id,
+            @RequestBody ScheduleRequestDTO scheduleRequestDTO,
+            HttpServletRequest request
+    ) {
+        log.info("ID가 {}인 일정의 수정을 시도합니다.", id);
+        // 요청에서 JWT 토큰 추출
+        String token = jwtUtil.getTokenFromRequest(request);
+
+        // 토큰이 "Bearer "로 시작하는지 확인 후, 시작한다면 접두사를 제거
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);  // "Bearer " 이후의 실제 토큰만 추출
+        }
+
+        log.info("현재 유저 권한: {}", jwtUtil.getUserRoleFromToken(token));
+
+        // 권한 확인
+        if (!jwtUtil.isAdmin(token)) {
+            log.info("관리자만 수정 가능합니다");
+            return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).body("권한이 없습니다.");
+        }
+
         ScheduleResponseDTO response = scheduleService.updateSchedule(id, scheduleRequestDTO);
+        log.info("ID가 {}인 일정의 수정을 완료하였습니다.", id);
         return ResponseEntity.ok(response);
     }
 
-    // 일정 삭제 메서드
+    // 관리자 일정 삭제 메서드
     @DeleteMapping("/{id}")
-    public ResponseEntity<Long> deleteScheduel(@PathVariable Long id) {
-        log.info("ID가 {}인 일정 삭제", id);
+    public ResponseEntity<?> deleteScheduel(@PathVariable Long id, HttpServletRequest request) {
+        log.info("ID가 {}인 일정 삭제를 시도합니다.", id);
+
+        String token = jwtUtil.getTokenFromRequest(request);
+
+        // 토큰이 "Bearer "로 시작하는지 확인 후, 시작한다면 접두사를 제거
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);  // "Bearer " 이후의 실제 토큰만 추출
+        }
+        log.info("현재 유저 권한: {}", jwtUtil.getUserRoleFromToken(token));
+
+        // 권한 확인
+        if (!jwtUtil.isAdmin(token)) {
+            log.info("관리자만 삭제 가능합니다.");
+            return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).body("권한이 없습니다.");
+        }
+
         scheduleService.deleteSchedule(id);
         log.info("ID가 {}인 일정과 해당 일정의 댓글들이 삭제가 완료되었습니다", id);
         return ResponseEntity.ok(id);

@@ -1,5 +1,6 @@
 package kdg.jwt;
 
+import com.fasterxml.jackson.databind.ser.std.StdArraySerializers;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import kdg.entity.UserRoleEnum;
 import kdg.exception.ExpiredTokenException;
 import kdg.exception.MissingTokenException;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,11 +25,12 @@ import java.util.Base64;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtUtil {
     // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
     // 사용자 권한 값의 KEY
-    public static final String AUTHORIZATION_KEY = "auth";
+    public static final String AUTHORIZATION_KEY = "role";
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
     // 토큰 만료시간
@@ -126,4 +129,30 @@ public class JwtUtil {
         }
         return null;
     }
+
+    // 토큰에서 권한 정보 추출
+    public String getUserRoleFromToken(String token) {
+        // 토큰 파싱하여 클레임 추출
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)  // 서명에 사용한 키 설정
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        // 클레임에서 권한 정보를 문자열로 가져오기
+        return claims.get(AUTHORIZATION_KEY, String.class);
+    }
+
+    // 권한 정보가 관리자인지 확인
+    public boolean isAdmin(String token) {
+        String role = getUserRoleFromToken(token); // 토큰에서 역할 정보 가져오기
+        boolean flag = false;
+        if (role.equals("ADMIN")) {
+            flag = true;
+        }
+        return flag;
+
+    }
+
+
 }
