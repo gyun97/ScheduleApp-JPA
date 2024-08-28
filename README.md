@@ -10,13 +10,14 @@
 
 ## 1. 유저 API
 
-| 기능       | Method | URL            | request       | response | 상태 코드       |
-|----------|--------|----------------|---------------|----------|-------------|
-| 유저 등록    | POST   | /users         | request body  | 등록 정보    | 200 : 정상 등록 |
-| 유저 조회    | GET    | /users/{id} | request param | 단건 응답 정보 | 200 : 정상 조회  |
-| 유저 목록 조회 | GET    | /users      | request body  | 다건 응답 정보 | 200 : 정상 조회  |
-| 유저 수정    | PUT    | /users/{id} | request body  | 수정 정보    | 200 : 정상 수정 |
-| 유저 삭제    | DELETE | /users/{id} | request param | 삭제 정보    | 200 : 정상 삭제 |
+| 기능       | Method | URL           | request                                                                                                                                           | response                                                                                                                                       | 상태 코드       |
+|------------|--------|---------------|---------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|----------------|
+| 유저 등록    | POST   | /users/signup | `{"email" : "string1@a.com", "userName" : "string1", "password" : "string1", "admin" : true, "adminToken" : "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC"}` | `{"id": 1, "userName": "string1", "email": "string1@a.com", "createdAt": "2024-08-28T15:45:04.274563", "updatedAt": "2024-08-28T15:45:04.269745", "role": "ADMIN"}` | 200 : 정상 등록 |
+| 유저 로그인   | POST   | /users/login  | `{"email" : "string1@a.com", "password" : "string1"}`                                                                                             | -                                                                                                                                              | 200 : 정상 로그인 |
+| 유저 조회    | GET    | /users/{id}   | -                                                                                                                                                 | `{"id": 1, "userName": "string1", "email": "string1@a.com", "createdAt": "2024-08-28T15:32:16.72474", "updatedAt": "2024-08-28T15:40:13.726104", "role": "ADMIN"}`   | 200 : 정상 조회  |
+| 유저 목록 조회 | GET    | /users        | -                                                                                                                                                 | `[{"id": 1, "userName": "string1", "email": "string1@a.com", "createdAt": "2024-08-28T15:32:16.72474", "updatedAt": "2024-08-28T15:40:13.726104", "role": "ADMIN"}]` | 200 : 정상 조회  |
+| 유저 수정    | PUT    | /users/{id}   | `{"userName": "string2", "email" : "string2@a.com", "password" : "string2"}`                                                                      | `{"id": 1, "userName": "string2", "email": "string2@a.com", "createdAt": "2024-08-28T15:32:16.72474", "updatedAt": "2024-08-28T15:48:52.392694", "role": "ADMIN"}`   | 200 : 정상 수정 |
+| 유저 삭제    | DELETE | /users/{id}   | -                                                                                                                                                 | -                                                                                                                                              | 200 : 정상 삭제 |
 
 <br>
 
