@@ -1,6 +1,7 @@
 package kdg.dto;
 
 import kdg.entity.User;
+import kdg.entity.UserRoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,6 +16,7 @@ public class UserResponseDTO {
     private String email;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private UserRoleEnum role;
 
     public static UserResponseDTO toResponseDTO(User entity) {
         return new UserResponseDTO(
@@ -22,7 +24,8 @@ public class UserResponseDTO {
                 entity.getUserName(),
                 entity.getEmail(),
                 entity.getCreatedAt(),
-                entity.getUpdatedAt()
+                entity.getUpdatedAt(),
+                entity.getRole()
         );
     }
 }

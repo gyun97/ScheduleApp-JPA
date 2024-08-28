@@ -7,7 +7,20 @@
 
 <br>
 
-## 1. 일정 API
+
+## 1. 유저 API
+
+| 기능       | Method | URL            | request       | response | 상태 코드       |
+|----------|--------|----------------|---------------|----------|-------------|
+| 유저 등록    | POST   | /users         | request body  | 등록 정보    | 200 : 정상 등록 |
+| 유저 조회    | GET    | /users/{id} | request param | 단건 응답 정보 | 200 : 정상 조회  |
+| 유저 목록 조회 | GET    | /users      | request body  | 다건 응답 정보 | 200 : 정상 조회  |
+| 유저 수정    | PUT    | /users/{id} | request body  | 수정 정보    | 200 : 정상 수정 |
+| 유저 삭제    | DELETE | /users/{id} | request param | 삭제 정보    | 200 : 정상 삭제 |
+
+<br>
+
+## 2. 일정 API
 | 기능    | Method | URL             | request       | response | 상태 코드       |
 |-------|--------|-----------------|---------------|----------|-------------|
 | 일정 등록 | POST   | /schedules      | request body  | 등록 정보    | 200 : 정상 등록 |
@@ -16,7 +29,7 @@
 
 <br>
 
-## 2. 댓글 API
+## 3. 댓글 API
 
 
 | 기능       | Method | URL            | request       | response | 상태 코드       |
@@ -30,16 +43,6 @@
 <br>
 
 
-## 3. 유저 API
-
-
-| 기능       | Method | URL            | request       | response | 상태 코드       |
-|----------|--------|----------------|---------------|----------|-------------|
-| 유저 등록    | POST   | /users         | request body  | 등록 정보    | 200 : 정상 등록 |
-| 유저 조회    | GET    | /users/{id} | request param | 단건 응답 정보 | 200 : 정상 조회  |
-| 유저 목록 조회 | GET    | /users      | request body  | 다건 응답 정보 | 200 : 정상 조회  |
-| 유저 수정    | PUT    | /users/{id} | request body  | 수정 정보    | 200 : 정상 수정 |
-| 유저 삭제    | DELETE | /users/{id} | request param | 삭제 정보    | 200 : 정상 삭제 |
 
 
 <br>
