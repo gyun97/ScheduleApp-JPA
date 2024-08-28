@@ -13,6 +13,7 @@ public class ScheduleRequestDTO {
     private String userName;
     private String content;
     private String title;
+    private String userEmail;
 
 
 }

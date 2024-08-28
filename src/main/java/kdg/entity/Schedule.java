@@ -61,6 +61,7 @@ public class Schedule extends TimeStamped{
         this.title = scheduleRequestDTO.getTitle();
         this.content = scheduleRequestDTO.getContent();
         this.updatedAt = LocalDateTime.now();
+        this.userEmail = scheduleRequestDTO.getUserEmail();
     }
 
     // 해당 일정 날짜에 날씨 삽입 메서드

@@ -31,7 +31,7 @@ public class ScheduleController {
     public ResponseEntity<ScheduleResponseDTO> createSchedule(@RequestBody ScheduleRequestDTO scheduleRequestDTO) {
         log.info("일정 추가");
         ScheduleResponseDTO response = scheduleService.save(scheduleRequestDTO);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpServletResponse.SC_CREATED).body(response);
     }
 
     // 일정 조회 메서드(단건)
@@ -60,12 +60,8 @@ public class ScheduleController {
     ) {
         log.info("ID가 {}인 일정의 수정을 시도합니다.", id);
         // 요청에서 JWT 토큰 추출
-        String token = jwtUtil.getTokenFromRequest(request);
-
-        // 토큰이 "Bearer "로 시작하는지 확인 후, 시작한다면 접두사를 제거
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);  // "Bearer " 이후의 실제 토큰만 추출
-        }
+        String tokenFromRequest = jwtUtil.getTokenFromRequest(request);
+        String token = jwtUtil.substringToken(tokenFromRequest);
 
         log.info("현재 유저 권한: {}", jwtUtil.getUserRoleFromToken(token));
 
@@ -85,12 +81,10 @@ public class ScheduleController {
     public ResponseEntity<?> deleteScheduel(@PathVariable Long id, HttpServletRequest request) {
         log.info("ID가 {}인 일정 삭제를 시도합니다.", id);
 
-        String token = jwtUtil.getTokenFromRequest(request);
+        // 요청에서 JWT 토큰 추출
+        String tokenFromRequest = jwtUtil.getTokenFromRequest(request);
+        String token = jwtUtil.substringToken(tokenFromRequest);
 
-        // 토큰이 "Bearer "로 시작하는지 확인 후, 시작한다면 접두사를 제거
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);  // "Bearer " 이후의 실제 토큰만 추출
-        }
         log.info("현재 유저 권한: {}", jwtUtil.getUserRoleFromToken(token));
 
         // 권한 확인
