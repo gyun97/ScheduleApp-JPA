@@ -5,6 +5,7 @@ import kdg.dto.CommentResponseDTO;
 import kdg.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class CommentController {
     public ResponseEntity<CommentResponseDTO> createComment(@RequestBody CommentRequestDTO commentRequestDTO) {
         log.info("댓글 작성");
         CommentResponseDTO response = commentService.createComment(commentRequestDTO);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // 댓글 단건 조회 메서드

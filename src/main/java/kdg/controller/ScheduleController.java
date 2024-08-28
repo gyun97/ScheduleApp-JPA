@@ -100,8 +100,9 @@ public class ScheduleController {
 
     // 일정에 담당 유저 추가 메서드
     @PostMapping("/{id}/assign-users")
-    public void addAssignedUser(@PathVariable Long id, @RequestBody AssignedUserDTO assignedUserDTO) {
+    public ResponseEntity<String> addAssignedUser(@PathVariable Long id, @RequestBody AssignedUserDTO assignedUserDTO) {
         log.info("ID {}인 일정에 ID가 {}인 해당 유저들을 추가 배정합니다.", id, assignedUserDTO.getAssignedUserIdList());
         scheduleService.addAssignedUser(id, assignedUserDTO);
+        return ResponseEntity.ok("담당 유저 추가 완료");
     }
 }

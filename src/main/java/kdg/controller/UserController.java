@@ -27,7 +27,8 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequestDTO, HttpServletResponse response) {
         log.info("회원 가입이 완료되었습니다.");
-        return ResponseEntity.ok(userService.createUser(userRequestDTO, response));
+        UserResponseDTO res = userService.createUser(userRequestDTO, response);
+        return ResponseEntity.status(HttpServletResponse.SC_CREATED).body(res);
     }
 
     // 유저 로그인 메서드
