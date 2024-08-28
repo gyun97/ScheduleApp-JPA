@@ -22,14 +22,14 @@
 <br>
 
 ## 2. 일정 API
-| 기능          | Method | URL              | request                                                                                                             | response                                                                                                                                                                                                                                   | 상태 코드                      |
-|-------------|--------|------------------|---------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
-| 일정 등록       | POST   | /schedules       | `{"userID" : 1, "userName" : "string1", "title" : "String", "content" : "String"}`                                  | `{"id": 1, "userId": 1, "userName": "string1", "title": "String", "content": "String", "createdAt": "2024-08-28T16:01:18.752902", "updatedAt": "2024-08-28T16:01:18.056242", "weather": "Clear and Cold", "userEmail": "string1@a.com"}`   | 201 : CREATED              |
-| 일정 조회       | GET    | /schedules/{id}  | -                                                                                                                   | `{"id": 1, "userId": 1, "userNames": "string1", "userEmails": "string1@a.com", "title": "String", "content": "String", "createdAt": "2024-08-28T16:01:18.752902", "updatedAt": "2024-08-28T16:01:18.056242"}`                              | 200 : OK                   |
-| 일정 목록 조회    | GET    | /schedules?page= | -                                                                                                                   | `[{"id": 1, "userId": 1, "userNames": "string1", "userEmails": "string1@a.com", "title": "String", "content": "String", "createdAt": "2024-08-28T16:01:18.752902", "updatedAt": "2024-08-28T16:01:18.056242"}]`                            | 200 : OK                   |
+| 기능          | Method | URL              | request                                                                                                        | response                                                                                                                                                                                                                                   | 상태 코드                      |
+|-------------|--------|------------------|----------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
+| 일정 등록       | POST   | /schedules       | `{"userID" : 1, "userName" : "string1", "title" : "String", "content" : "String"}`                             | `{"id": 1, "userId": 1, "userName": "string1", "title": "String", "content": "String", "createdAt": "2024-08-28T16:01:18.752902", "updatedAt": "2024-08-28T16:01:18.056242", "weather": "Clear and Cold", "userEmail": "string1@a.com"}`   | 201 : CREATED              |
+| 일정 조회       | GET    | /schedules/{id}  | -                                                                                                              | `{"id": 1, "userId": 1, "userNames": "string1", "userEmails": "string1@a.com", "title": "String", "content": "String", "createdAt": "2024-08-28T16:01:18.752902", "updatedAt": "2024-08-28T16:01:18.056242"}`                              | 200 : OK                   |
+| 일정 목록 조회    | GET    | /schedules?page= | -                                                                                                              | `[{"id": 1, "userId": 1, "userNames": "string1", "userEmails": "string1@a.com", "title": "String", "content": "String", "createdAt": "2024-08-28T16:01:18.752902", "updatedAt": "2024-08-28T16:01:18.056242"}]`                            | 200 : OK                   |
 | 일정 수정       | PUT    | /schedules/{id}  | `{"userID" : 1, "userName" : "string2", "userEmail" : "string2@a.com", "title" : "string2", "content" : "string2"}` | `{"id": 1, "userId": 1, "userName": "string2", "title": "string2", "content": "string2", "createdAt": "2024-08-28T16:01:18.752902", "updatedAt": "2024-08-28T16:10:06.757293", "weather": "Clear and Cold", "userEmail": "string2@a.com"}` | 200 : OK, 403 : FORBIDDEN	 |
-| 일정 삭제       | DELETE | /schedules/{id}  | -                                                                                                                   | -                                                                                                                                                                                                                                          | 200 : OK, 403 : FORBIDDEN  |
-| 일정 담당 유저 추가 | POST   | /schedules/{id}/assign-users                | -                                                                                                                   | -                                                                                                                                                                                                | 200 : OK                   |
+| 일정 삭제       | DELETE | /schedules/{id}  | -                                                                                                              | -                                                                                                                                                                                                                                          | 200 : OK, 403 : FORBIDDEN  |
+| 일정 담당 유저 추가 | POST   | /schedules/{id}/assign-users                | `{"assignedUserIdList" : [2,3]}`                                                                                                               | -                                                                                                                                                                                                | 200 : OK                   |
 <br>
 
 ## 3. 댓글 API
@@ -54,7 +54,7 @@
 
 # ERD
 
-![img.png](img.png)
+![img_1.png](img_1.png)
 
 
 
@@ -65,42 +65,73 @@
 
 ```sql
 CREATE TABLE `schedule` (
-                            `id` BIGINT NOT NULL AUTO_INCREMENT,
-                            `user_name` VARCHAR(20) NULL,
-                            `title` VARCHAR(50) NOT NULL,
-                            `content` VARCHAR(200) NOT NULL,
-                            `created_at` DATETIME NULL,
-                            `updated_at` DATETIME NULL,
-                            PRIMARY KEY (`id`)
+                            `schedule_id`	BIGINT	NULL,
+                            `user_name`	VARCHAR(20)	NULL,
+                            `title`	VARCHAR(50)	NOT NULL,
+                            `content`	VARCHAR(200)	NOT NULL,
+                            `created_at`	DATETIME	NULL,
+                            `updated_at`	DATETIME	NULL,
+                            `user_id`	BIGINT	NULL,
+                            `user_email`	VARCHAR(20)	NULL,
+                            `weather`	VARCHAR(50)	NULL
 );
 
 CREATE TABLE `user` (
-                        `id` BIGINT NOT NULL AUTO_INCREMENT,
-                        `name` VARCHAR(20) NOT NULL,
-                        `email` VARCHAR(20) NOT NULL,
-                        `created_at` DATETIME NOT NULL,
-                        `updated_at` DATETIME NULL,
-                        PRIMARY KEY (`id`)
+                        `user_id`	BIGINT	NOT NULL,
+                        `user_name`	VARCHAR(20)	NOT NULL,
+                        `email`	VARCHAR(20)	NOT NULL,
+                        `created_at`	DATETIME	NOT NULL,
+                        `updated_at`	DATETIME	NULL,
+                        `password`	VARHCHAR(50)	NULL,
+                        `role`	VARHCHAR(20)	NULL
 );
 
 CREATE TABLE `comment` (
-                           `id` BIGINT NOT NULL AUTO_INCREMENT,
-                           `content` VARCHAR(200) NOT NULL,
-                           `user_name` VARCHAR(20) NULL,
-                           `created_at` DATETIME NULL,
-                           `updated_at` DATETIME NULL,
-                           `schedule_id` BIGINT NOT NULL,
-                           PRIMARY KEY (`id`),
-                           FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`id`)
+                           `comment_id`	BIGINT	NOT NULL,
+                           `schedule_id`	BIGINT	NOT NULL,
+                           `content`	VARCHAR(200)	NOT NULL,
+                           `user_name`	VARCHAR(20)	NULL,
+                           `created_at`	DATETIME	NULL,
+                           `updated_at`	DATETIME	NULL
 );
 
 CREATE TABLE `schedule_user_map` (
-                                     `id` BIGINT NOT NULL AUTO_INCREMENT,
-                                     `schedule_id` BIGINT NOT NULL,
-                                     `user_id` BIGINT NOT NULL,
-                                     PRIMARY KEY (`id`),
-                                     FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`id`),
-                                     FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+                                     `id`	BIGINT	NOT NULL,
+                                     `schedule_id`	BIGINT	NOT NULL,
+                                     `user_id`	BIGINT	NOT NULL
 );
+
+ALTER TABLE `schedule` ADD CONSTRAINT `PK_SCHEDULE` PRIMARY KEY (
+                                                                 `schedule_id`
+    );
+
+ALTER TABLE `user` ADD CONSTRAINT `PK_USER` PRIMARY KEY (
+                                                         `user_id`
+    );
+
+ALTER TABLE `comment` ADD CONSTRAINT `PK_COMMENT` PRIMARY KEY (
+                                                               `comment_id`
+    );
+
+ALTER TABLE `schedule_user_map` ADD CONSTRAINT `PK_SCHEDULE_USER_MAP` PRIMARY KEY (
+                                                                                   `id`,
+                                                                                   `schedule_id`,
+                                                                                   `user_id`
+    );
+
+ALTER TABLE `schedule_user_map` ADD CONSTRAINT `FK_schedule_TO_schedule_user_map_1` FOREIGN KEY (
+                                                                                                 `schedule_id`
+    )
+    REFERENCES `schedule` (
+                           `schedule_id`
+        );
+
+ALTER TABLE `schedule_user_map` ADD CONSTRAINT `FK_user_TO_schedule_user_map_1` FOREIGN KEY (
+                                                                                             `user_id`
+    )
+    REFERENCES `user` (
+                       `user_id`
+        );
+
 
 ```
